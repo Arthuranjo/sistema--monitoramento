@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+html: <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
@@ -15,14 +15,43 @@
 
   <div class="container">
 
+    <!-- TEMPERATURA -->
     <div class="card" id="tempCard">
+
       <h2>Temperatura</h2>
+
       <p id="temp">--</p>
+
+      <div class="limits">
+        <p>Min: <span id="tempMin">20</span> °C</p>
+        <p>Max: <span id="tempMax">40</span> °C</p>
+      </div>
+
+      <button id="tempBtn" class="controlBtn">
+        Controlar Temperatura
+      </button>
+
+      <p class="actionMsg" id="tempMsg"></p>
+
     </div>
 
+    <!-- VIBRAÇÃO -->
     <div class="card" id="vibCard">
+
       <h2>Vibração</h2>
+
       <p id="vib">--</p>
+
+      <div class="limits">
+        <p>Limite: <span id="vibLimit">2.5</span> g</p>
+      </div>
+
+      <button id="vibBtn" class="controlBtn">
+        Reduzir Vibração
+      </button>
+
+      <p class="actionMsg" id="vibMsg"></p>
+
     </div>
 
   </div>
@@ -30,6 +59,6 @@
   <div id="status">Conectando...</div>
 
   <script src="script.js"></script>
-</body>
 
+</body>
 </html>
