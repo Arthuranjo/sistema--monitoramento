@@ -16,8 +16,31 @@ h1 {
   margin: 40px auto;
 }
 
+header {
+  width: 100%;
+  height: 60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(90deg, #0f2027, #203a43, #2c5364);
+  color: #00e5ff;
+
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 1px;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+  border-bottom: 2px solid #00e5ff;
+
+  position: relative;
+  z-index: 10;
+}
+
 /* LINHAS (cada seção) */
 .row {
+  flex: 1;
   display: flex;
   gap: 30px;
   margin-bottom: 40px;
