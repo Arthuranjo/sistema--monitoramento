@@ -17,6 +17,10 @@ const controlVibTopic = "industria4/control/vib";
 const alarmSound = document.getElementById("alarmSound");
 let alarmActive = false;
 
+// 🔥 ESTADO GLOBAL (CORREÇÃO)
+let tempAlertActive = false;
+let vibAlertActive = false;
+
 // ================= LIMITES =================
 const TEMP_MIN = 20;
 const TEMP_MAX = 40;
@@ -49,7 +53,7 @@ const tempChart = new Chart(document.getElementById("chartTemp"), {
     }]
   },
   options: {
-    resposive: true,
+    responsive: true,
     maintainAspectRatio: true
   }
 });
@@ -65,8 +69,8 @@ const vibChart = new Chart(document.getElementById("chartVib"), {
       tension: 0.3
     }]
   },
-   options: {
-    resposive: true,
+  options: {
+    responsive: true,
     maintainAspectRatio: true
   }
 });
@@ -81,9 +85,10 @@ client.on("connect", () => {
 });
 
 // ================= CONTROLE GLOBAL DE ALARME =================
-function checkAlarm(tempAlert, vibAlert) {
-  if (tempAlert || vibAlert) {
+function checkAlarm() {
+  if (tempAlertActive || vibAlertActive) {
     if (!alarmActive) {
+      alarmSound.loop = true; // 🔥 som contínuo
       alarmSound.play();
       alarmActive = true;
     }
@@ -100,16 +105,12 @@ client.on("message", (topic, message) => {
   const value = parseFloat(message.toString());
   if (isNaN(value)) return;
 
-  let tempAlert = false;
-  let vibAlert = false;
-
   // ================= TEMPERATURA =================
   if (topic === tempTopic) {
 
     document.getElementById("temp").innerHTML =
       value.toFixed(1) + " °C";
 
-    // gráfico
     tempData.push(value);
     labels.push(new Date().toLocaleTimeString());
 
@@ -128,7 +129,8 @@ client.on("message", (topic, message) => {
       tempBtn.style.display = "inline-block";
 
       tempMsg.innerHTML = "⚠️ Temperatura fora do ideal";
-      tempAlert = true;
+
+      tempAlertActive = true; // 🔥 FIX
 
     } else {
 
@@ -138,6 +140,8 @@ client.on("message", (topic, message) => {
       tempBtn.style.display = "none";
 
       tempMsg.innerHTML = "✅ Temperatura controlada";
+
+      tempAlertActive = false; // 🔥 FIX
     }
   }
 
@@ -147,7 +151,6 @@ client.on("message", (topic, message) => {
     document.getElementById("vib").innerHTML =
       value.toFixed(2) + " g";
 
-    // gráfico
     vibData.push(value);
 
     if (vibData.length > 20) {
@@ -164,7 +167,8 @@ client.on("message", (topic, message) => {
       vibBtn.style.display = "inline-block";
 
       vibMsg.innerHTML = "⚠️ Vibração acima do limite";
-      vibAlert = true;
+
+      vibAlertActive = true; // 🔥 FIX
 
     } else {
 
@@ -174,11 +178,13 @@ client.on("message", (topic, message) => {
       vibBtn.style.display = "none";
 
       vibMsg.innerHTML = "✅ Vibração controlada";
+
+      vibAlertActive = false; // 🔥 FIX
     }
   }
 
-  // ativa/desativa som corretamente
-  checkAlarm(tempAlert, vibAlert);
+  // 🔥 agora funciona corretamente
+  checkAlarm();
 });
 
 // ================= CONTROLE TEMPERATURA =================
