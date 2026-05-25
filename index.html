@@ -5,59 +5,85 @@
   <meta charset="UTF-8">
   <title>Dashboard Industrial</title>
 
+  <!-- MQTT -->
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+  <!-- CHART.JS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
   <h1>📡 Monitoramento Industrial IoT</h1>
+  <div id="status">Conectando...</div>
 
-  <div class="container">
+  <div class="dashboard">
 
-    <!-- TEMPERATURA -->
-    <div class="card" id="tempCard">
+    <!-- ===== TEMPERATURA ===== -->
+    <div class="row">
 
-      <h2>Temperatura</h2>
+      <!-- CARD -->
+      <div class="card" id="tempCard">
+        <h2>🌡️ Temperatura</h2>
 
-      <p id="temp">--</p>
+        <p id="temp">--</p>
 
-      <div class="limits">
-        <p>Min: <span id="tempMin">20</span> °C</p>
-        <p>Max: <span id="tempMax">40</span> °C</p>
+        <div class="limits">
+          <p>Limite Min: <span id="tempMin">20</span> °C</p>
+          <p>Limite Max: <span id="tempMax">40</span> °C</p>
+        </div>
+
+        <button id="tempBtn" class="controlBtn">
+          Controlar Temperatura
+        </button>
+
+        <p class="actionMsg" id="tempMsg"></p>
       </div>
 
-      <button id="tempBtn" class="controlBtn">
-        Controlar Temperatura
-      </button>
-
-      <p class="actionMsg" id="tempMsg"></p>
+      <!-- GRÁFICO -->
+      <div class="chartBox">
+        <canvas id="chartTemp"></canvas>
+      </div>
 
     </div>
 
-    <!-- VIBRAÇÃO -->
-    <div class="card" id="vibCard">
+    <!-- ===== VIBRAÇÃO ===== -->
+    <div class="row">
 
-      <h2>Vibração</h2>
+      <!-- CARD -->
+      <div class="card" id="vibCard">
+        <h2>📳 Vibração</h2>
 
-      <p id="vib">--</p>
+        <p id="vib">--</p>
 
-      <div class="limits">
-        <p>Limite: <span id="vibLimit">2.5</span> g</p>
+        <div class="limits">
+          <p>Limite: <span id="vibLimit">2.5</span> g</p>
+        </div>
+
+        <button id="vibBtn" class="controlBtn">
+          Reduzir Vibração
+        </button>
+
+        <p class="actionMsg" id="vibMsg"></p>
       </div>
 
-      <button id="vibBtn" class="controlBtn">
-        Reduzir Vibração
-      </button>
-
-      <p class="actionMsg" id="vibMsg"></p>
+      <!-- GRÁFICO -->
+      <div class="chartBox">
+        <canvas id="chartVib"></canvas>
+      </div>
 
     </div>
 
   </div>
 
-  <div id="status">Conectando...</div>
+  <!-- AUDIO -->
+  <audio id="alarmSound"
+    src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
+  </audio>
 
+  <!-- SCRIPT -->
   <script src="script.js"></script>
 
 </body>

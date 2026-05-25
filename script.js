@@ -6,29 +6,73 @@ const client = mqtt.connect(
   }
 );
 
-// tópicos
+// ================= TÓPICOS =================
 const tempTopic = "industria4/temperatura";
 const vibTopic = "industria4/vibracao";
 
-// tópicos de controle
 const controlTempTopic = "industria4/control/temp";
 const controlVibTopic = "industria4/control/vib";
 
-// limites
+// ================= AUDIO =================
+const alarmSound = document.getElementById("alarmSound");
+let alarmActive = false;
+
+// ================= LIMITES =================
 const TEMP_MIN = 20;
 const TEMP_MAX = 40;
 const VIB_LIMIT = 2.5;
 
-// elementos
+// ================= ELEMENTOS =================
 const tempBtn = document.getElementById("tempBtn");
 const vibBtn = document.getElementById("vibBtn");
 
 const tempMsg = document.getElementById("tempMsg");
 const vibMsg = document.getElementById("vibMsg");
 
-// conexão
-client.on("connect", () => {
+const tempCard = document.getElementById("tempCard");
+const vibCard = document.getElementById("vibCard");
 
+// ================= GRÁFICOS =================
+const tempData = [];
+const vibData = [];
+const labels = [];
+
+const tempChart = new Chart(document.getElementById("chartTemp"), {
+  type: "line",
+  data: {
+    labels: labels,
+    datasets: [{
+      label: "Temperatura",
+      data: tempData,
+      borderWidth: 2,
+      tension: 0.3
+    }]
+  },
+  options: {
+    resposive: true,
+    maintainAspectRatio: true
+  }
+});
+
+const vibChart = new Chart(document.getElementById("chartVib"), {
+  type: "line",
+  data: {
+    labels: labels,
+    datasets: [{
+      label: "Vibração",
+      data: vibData,
+      borderWidth: 2,
+      tension: 0.3
+    }]
+  },
+   options: {
+    resposive: true,
+    maintainAspectRatio: true
+  }
+});
+
+// ================= CONEXÃO =================
+client.on("connect", () => {
   document.getElementById("status").innerHTML =
     "🟢 Conectado ao MQTT";
 
@@ -36,10 +80,28 @@ client.on("connect", () => {
   client.subscribe(vibTopic);
 });
 
-// mensagens MQTT
+// ================= CONTROLE GLOBAL DE ALARME =================
+function checkAlarm(tempAlert, vibAlert) {
+  if (tempAlert || vibAlert) {
+    if (!alarmActive) {
+      alarmSound.play();
+      alarmActive = true;
+    }
+  } else {
+    alarmActive = false;
+    alarmSound.pause();
+    alarmSound.currentTime = 0;
+  }
+}
+
+// ================= MENSAGENS MQTT =================
 client.on("message", (topic, message) => {
 
   const value = parseFloat(message.toString());
+  if (isNaN(value)) return;
+
+  let tempAlert = false;
+  let vibAlert = false;
 
   // ================= TEMPERATURA =================
   if (topic === tempTopic) {
@@ -47,21 +109,35 @@ client.on("message", (topic, message) => {
     document.getElementById("temp").innerHTML =
       value.toFixed(1) + " °C";
 
-    const card = document.getElementById("tempCard");
+    // gráfico
+    tempData.push(value);
+    labels.push(new Date().toLocaleTimeString());
+
+    if (tempData.length > 20) {
+      tempData.shift();
+      labels.shift();
+    }
+
+    tempChart.update();
 
     if (value > TEMP_MAX || value < TEMP_MIN) {
 
-      card.classList.add("alert");
+      tempCard.classList.remove("ok");
+      tempCard.classList.add("alert");
 
       tempBtn.style.display = "inline-block";
 
+      tempMsg.innerHTML = "⚠️ Temperatura fora do ideal";
+      tempAlert = true;
+
     } else {
 
-      card.classList.remove("alert");
+      tempCard.classList.remove("alert");
+      tempCard.classList.add("ok");
 
       tempBtn.style.display = "none";
 
-      tempMsg.innerHTML = "";
+      tempMsg.innerHTML = "✅ Temperatura controlada";
     }
   }
 
@@ -71,53 +147,58 @@ client.on("message", (topic, message) => {
     document.getElementById("vib").innerHTML =
       value.toFixed(2) + " g";
 
-    const card = document.getElementById("vibCard");
+    // gráfico
+    vibData.push(value);
+
+    if (vibData.length > 20) {
+      vibData.shift();
+    }
+
+    vibChart.update();
 
     if (value > VIB_LIMIT) {
 
-      card.classList.add("alert");
+      vibCard.classList.remove("ok");
+      vibCard.classList.add("alert");
 
       vibBtn.style.display = "inline-block";
 
+      vibMsg.innerHTML = "⚠️ Vibração acima do limite";
+      vibAlert = true;
+
     } else {
 
-      card.classList.remove("alert");
+      vibCard.classList.remove("alert");
+      vibCard.classList.add("ok");
 
       vibBtn.style.display = "none";
 
-      vibMsg.innerHTML = "";
+      vibMsg.innerHTML = "✅ Vibração controlada";
     }
   }
+
+  // ativa/desativa som corretamente
+  checkAlarm(tempAlert, vibAlert);
 });
 
 // ================= CONTROLE TEMPERATURA =================
 tempBtn.addEventListener("click", () => {
 
-  tempMsg.innerHTML =
-    "⏳ Aguarde... controlando temperatura";
-
+  tempMsg.innerHTML = "⏳ Controlando temperatura...";
   client.publish(controlTempTopic, "on");
 
   setTimeout(() => {
-
-    tempMsg.innerHTML =
-      "✅ Temperatura controlada com sucesso";
-
+    tempMsg.innerHTML = "✅ Temperatura estabilizada";
   }, 3000);
 });
 
 // ================= CONTROLE VIBRAÇÃO =================
 vibBtn.addEventListener("click", () => {
 
-  vibMsg.innerHTML =
-    "⏳ Aguarde... reduzindo vibração";
-
+  vibMsg.innerHTML = "⏳ Reduzindo vibração...";
   client.publish(controlVibTopic, "on");
 
   setTimeout(() => {
-
-    vibMsg.innerHTML =
-      "✅ Vibração controlada com sucesso";
-
+    vibMsg.innerHTML = "✅ Vibração estabilizada";
   }, 3000);
 });
