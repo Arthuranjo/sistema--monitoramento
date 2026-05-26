@@ -37,6 +37,7 @@ const tempData = [];
 const vibData = [];
 const labels = [];
 
+// ===== TEMPERATURA =====
 const tempChart = new Chart(document.getElementById("chartTemp"), {
   type: "line",
   data: {
@@ -45,15 +46,53 @@ const tempChart = new Chart(document.getElementById("chartTemp"), {
       label: "Temperatura",
       data: tempData,
       borderWidth: 2,
-      tension: 0.3
+      tension: 0.3,
+
+      segment: {
+        borderColor: ctx => {
+          const value = ctx.p0.parsed.y;
+          return (value > TEMP_MAX || value < TEMP_MIN)
+            ? "#ff1744"  // vermelho
+            : "#00e676"; // verde
+        }
+      }
     }]
   },
   options: {
     responsive: true,
-    maintainAspectRatio: false
+    maintainAspectRatio: false,
+    plugins: {
+      annotation: {
+        annotations: {
+          maxLine: {
+            type: "line",
+            yMin: TEMP_MAX,
+            yMax: TEMP_MAX,
+            borderColor: "#ff1744",
+            borderWidth: 2,
+            label: {
+              enabled: true,
+              content: "Máx"
+            }
+          },
+          minLine: {
+            type: "line",
+            yMin: TEMP_MIN,
+            yMax: TEMP_MIN,
+            borderColor: "#ff1744",
+            borderWidth: 2,
+            label: {
+              enabled: true,
+              content: "Min"
+            }
+          }
+        }
+      }
+    }
   }
 });
 
+// ===== VIBRAÇÃO =====
 const vibChart = new Chart(document.getElementById("chartVib"), {
   type: "line",
   data: {
@@ -62,15 +101,40 @@ const vibChart = new Chart(document.getElementById("chartVib"), {
       label: "Vibração",
       data: vibData,
       borderWidth: 2,
-      tension: 0.3
+      tension: 0.3,
+
+      segment: {
+        borderColor: ctx => {
+          const value = ctx.p0.parsed.y;
+          return (value > VIB_LIMIT)
+            ? "#ff1744"
+            : "#00e676";
+        }
+      }
     }]
   },
-   options: {
+  options: {
     responsive: true,
-    maintainAspectRatio: false
+    maintainAspectRatio: false,
+    plugins: {
+      annotation: {
+        annotations: {
+          vibLimitLine: {
+            type: "line",
+            yMin: VIB_LIMIT,
+            yMax: VIB_LIMIT,
+            borderColor: "#ff1744",
+            borderWidth: 2,
+            label: {
+              enabled: true,
+              content: "Limite"
+            }
+          }
+        }
+      }
+    }
   }
 });
-
 // ================= CONEXÃO =================
 client.on("connect", () => {
   document.getElementById("status").innerHTML =
