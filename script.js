@@ -1,5 +1,5 @@
 const client = mqtt.connect(
-  "wss://hfb72712.ala.eu-central-1.emqxsl.com:8084/mqtt",
+  "wss://fc9a1f21.ala.us-east-1.emqxsl.com:8084/mqtt",
   {
     username: "esp32",
     password: "123456"
