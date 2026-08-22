@@ -4,6 +4,16 @@ Sistema de monitoramento industrial desenvolvido com **ESP32**, **MPU6050**, **d
 
 O projeto monitora temperatura e vibração em tempo real, identifica situações fora dos limites definidos e permite o controle do sistema através de uma aplicação web.
 
+### 🔗 Demonstração
+
+🌐 **Dashboard Web:**
+[https://arthuranjo.github.io/sistema--monitoramento/](https://arthuranjo.github.io/sistema--monitoramento/?utm_source=chatgpt.com)
+
+🧪 **Simulação no Wokwi:**
+[Abrir projeto no Wokwi](https://wokwi.com/projects/463460726560792577?utm_source=chatgpt.com)
+
+> ⭐ Para testar o projeto, é recomendado utilizar a simulação no **Wokwi**, pois não é necessário possuir o hardware físico.
+
 ---
 
 ## 🎯 Funcionalidades
@@ -37,7 +47,7 @@ O projeto monitora temperatura e vibração em tempo real, identifica situaçõe
 
 ## 🏗️ Arquitetura
 
-```text id="9jgj6n"
+```text id="r0f8n2"
 MPU6050
    │
    ▼
@@ -62,14 +72,14 @@ A aplicação também pode enviar comandos MQTT para o ESP32.
 
 ### Dados enviados pelo ESP32
 
-```text id="7khw8c"
+```text id="l9c3qv"
 industria4/temperatura
 industria4/vibracao
 ```
 
 ### Comandos recebidos pelo ESP32
 
-```text id="j0o9gf"
+```text id="z4j8kx"
 industria4/tempMax
 industria4/tempMin
 industria4/vibLimit
@@ -80,29 +90,8 @@ industria4/control/vib
 
 Para visualizar todas as mensagens do projeto, utilize:
 
-```text id="0x8j7w"
+```text id="a7n2wp"
 industria4/#
-```
-
----
-
-# ▶️ Como executar
-
-## ⭐ Recomendado: Wokwi
-
-A maneira mais fácil de testar o projeto é através do **Wokwi**, pois não é necessário possuir o ESP32 e os sensores fisicamente.
-
-### 🔗 Simulação
-
-[Abrir projeto no Wokwi](https://wokwi.com/projects/463460726560792577?utm_source=chatgpt.com)
-
-Abra o projeto e execute a simulação.
-
-O ESP32 utiliza a rede:
-
-```text id="x8x7vy"
-SSID: Wokwi-GUEST
-Password: vazio
 ```
 
 ---
@@ -117,20 +106,20 @@ No deployment:
 
 Crie um usuário MQTT, por exemplo:
 
-```text id="0lqgtr"
+```text id="h4k6ps"
 Username: esp32
 Password: SUA_SENHA
 ```
 
 Depois, no cliente MQTT utilizado para testes, conecte-se ao broker através de **MQTT over TLS** na porta:
 
-```text id="v0n6x1"
+```text id="c8m1vx"
 8883
 ```
 
 Na área de subscriptions, utilize:
 
-```text id="g2k0fr"
+```text id="f5q9zt"
 industria4/#
 ```
 
@@ -142,11 +131,35 @@ Ao executar o ESP32, as mensagens de temperatura e vibração deverão aparecer 
 
 ---
 
+## ▶️ Executando pelo Wokwi
+
+A maneira mais fácil de testar o projeto é através do **Wokwi**.
+
+[Abrir projeto no Wokwi](https://wokwi.com/projects/463460726560792577?utm_source=chatgpt.com)
+
+O ESP32 utiliza a rede:
+
+```text id="q2h7km"
+SSID: Wokwi-GUEST
+Password: vazio
+```
+
+Após iniciar a simulação:
+
+1. O ESP32 conecta ao Wi-Fi;
+2. Conecta ao broker MQTT;
+3. Publica temperatura e vibração;
+4. O Dashboard Web recebe os dados;
+5. Os gráficos são atualizados em tempo real;
+6. Os comandos enviados pelo Dashboard são recebidos pelo ESP32.
+
+---
+
 ## 🌐 Aplicação Web
 
 A aplicação web utiliza **WebSocket Secure (WSS)** para se comunicar com o EMQX:
 
-```text id="8q9n5c"
+```text id="n6r3yd"
 wss://SEU_BROKER_EMQX:8084/mqtt
 ```
 
@@ -158,7 +171,7 @@ Os tópicos MQTT permanecem os mesmos.
 
 ## 📁 Estrutura
 
-```text id="2jj8u9"
+```text id="k3m8ws"
 sistema_monitoramento_maquina/
 │
 ├── src/
